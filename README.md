@@ -1,4 +1,0 @@
-# EstonianRealEstatePilot
-
-
-Information goes here
