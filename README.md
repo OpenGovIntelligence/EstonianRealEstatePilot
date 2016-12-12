@@ -24,5 +24,5 @@ Tallinn Ehitisregister (Geocoded) <- https://drive.google.com/file/d/0B1rjQ5-7oM
 
 Tallinn Address Data <- https://drive.google.com/open?id=0B-uo-u1vqujbaFFVVTZscVZmWms
 
-Tallinn Car Crash Data <- https://drive.google.com/open?id=0B-uo-u1vqujbcDYyQ3I5X1FRdXM Eesti Liikluskindlustuse Fond 2013-2016
+Tallinn Car Crash Data <- https://drive.google.com/open?id=0B-uo-u1vqujbR3prUFdYQTZUWnc Eesti Liikluskindlustuse Fond 2013-2016
 
