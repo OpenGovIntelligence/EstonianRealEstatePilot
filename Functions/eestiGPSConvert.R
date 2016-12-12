@@ -33,6 +33,11 @@ str(gpsDataNewCoordinates)
  $ X koordinaat       : num  6585134 6415268 6587487 6570166 6589728 ...
 ########
 
+##Required Libraries
+library(sp)
+library(magrittr)
+library(data.table)
+
 eestiGPSConvert <- function(data_csv, X_COORD_COLUMN_NAME, Y_COORD_COLUMN_NAME){
   
   WGS84_PROJ <- CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
