@@ -14,6 +14,10 @@ Bus routes: http://soiduplaan.tallinn.ee/data/routes.txt
 
 Bus stops: http://soiduplaan.tallinn.ee/data/stops.txt
 
+School Addresses: http://info.haridus.ee/Asutused/Nimekiri 
+
+
+
 # Cleaned and Edited Data here
 
 Tallinn Ehitisregister (Geocoded) <- https://drive.google.com/file/d/0B1rjQ5-7oM8xUTRRUHA3MjI2d2c/view?usp=sharing
