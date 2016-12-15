@@ -26,3 +26,4 @@ Tallinn Address Data <- https://drive.google.com/open?id=0B-uo-u1vqujbaFFVVTZscV
 
 Tallinn Car Crash Data <- https://drive.google.com/open?id=0B-uo-u1vqujbR3prUFdYQTZUWnc Eesti Liikluskindlustuse Fond 2013-2016
 
+Tallinn School Address Information <- https://drive.google.com/open?id=0B-uo-u1vqujbVDNDcXllRmh0R2s 
