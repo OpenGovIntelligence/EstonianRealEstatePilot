@@ -61,5 +61,5 @@ eestiGPSConvert <- function(data_csv, X_COORD_COLUMN_NAME, Y_COORD_COLUMN_NAME){
   names(xy_coord)[2] <- paste("Lat")
   
  gpsDataNewCoordinates <- cbind(xy_coord, xy_data)
- 
+ gpsDataNewCoordinates <<- gpsDataNewCoordinates
 }
