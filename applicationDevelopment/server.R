@@ -4,9 +4,7 @@ library(data.table)
 library(nominatim)
 library(httr)
 
-crashData <- fread("datasets/crashData.csv")
-schoolData <- fread("datasets/schoolDataGeocoded.csv", stringsAsFactors = FALSE)
-
+schoolData <- readRDS("datasets/schoolData.rds")
 
 
 getAddressData <- function(address) {
