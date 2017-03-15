@@ -1,13 +1,12 @@
-library(shiny)
-library(leaflet)
-library(data.table)
-library(nominatim)
-library(httr)
+require(shiny)
+require(leaflet)
+require(data.table)
+require(nominatim)
+require(httr)
 
 schoolData <- readRDS("datasets/schoolData.rds")
 
-
-getAddressData <- function(address) {
+getAddressData <- function(address){
   url <- paste0("https://maps.googleapis.com/maps/api/geocode/json?address=",address)
   someData <- jsonlite::fromJSON(url)
 

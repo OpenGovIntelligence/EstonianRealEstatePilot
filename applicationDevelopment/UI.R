@@ -19,10 +19,30 @@ navbarPage(
                )
              ),
              mainPanel(
-               tags$style(type = "text/css", "#map {height: calc(100vh - 80px) !important;}"),
-               leafletOutput("map", width = "100%", height = "800px")
+               tags$style(type = "text/css", "#map {height: calc(100vh - 150px) !important;}"),
+               leafletOutput("map", width = "100%", height = "800px"),
+               hr(),
+               print("This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 693849.")
+               
              )
            )),
-  tabPanel("Data Explorer")
+  tabPanel("Data Exploration Tools",
+    a("Cube Explorer", href="http://wapps.islab.uom.gr/CubeVisualizer/crashes/", target="_blank"),
+    br(),
+    a("QB OLAP browser", href="http://wapps.islab.uom.gr/qbOLAPbrowser", target="_blank")),
+  tabPanel("About","The Estonian pilot program is one of 6 pilot programs being carried out 
+by the OpenGovIntelligence project. This pilot program is being carried out by The Estonian Ministry 
+of Economic Affairs and Communications and Tallinn University of Technology. 
+The purpose of this pilot program is to fight information asymmetry in the real estate market and
+provide an easy way to access real estate data. The pilot is intended to give real estate agents, property developers, 
+investors, and those involved in the real estate market (buyers, sellers, renters, students, new arrivals etc.)
+a deeper knowledge of the marketplace.",
+br(),
+br(),
+"For questions on current stage of pilot please contact: ", a("Keegan.mcbride@ttu.ee", target="_blank"))
+  
+  
   
 )
+
+
