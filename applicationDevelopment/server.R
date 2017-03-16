@@ -1,19 +1,12 @@
-list.of.packages <- c("shiny", "leaflet", "data.table", "ggmap")
-new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
-
-require(shiny)
-require(leaflet)
-require(data.table)
-require(nominatim)
-require(httr)
-require(ggmap)
+library(shiny)
+library(leaflet)
+library(data.table)
+library(ggmap)
 
 #This is a dataset for all school locations in Tallinn
 schoolData <- readRDS("datasets/schoolData.rds")
 
 function(input, output, session) {
-
   #Initializes the leaflet map for the page.
   output$outputmap <- renderLeaflet({
     map <-
@@ -23,6 +16,10 @@ function(input, output, session) {
               zoom = 12)
     
   })
+  
+  
+  geocoding <- eventReactive(input$addressButton, {geocode(input$address)})
+  
   
   
   #Takes an address input and places a marker on the map at given location
