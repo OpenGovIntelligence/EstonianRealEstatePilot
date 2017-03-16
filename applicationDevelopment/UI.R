@@ -16,12 +16,11 @@ navbarPage("Tallinn Real Estate Pilot Program",
                             "Schools" = 2,
                             "Bus stops" = 3
                           ),
-                          selected = 2
-                        )
+                                                )
                       ),
                       mainPanel(
                         tags$style(type = "text/css", "#map {height: calc(100vh - 150px) !important;}"),
-                        leafletOutput("map", width = "100%", height = "800px"),
+                        leafletOutput("outputmap", width = "100%", height = "800px"),
                         hr(
                           "This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 693849."
                         )

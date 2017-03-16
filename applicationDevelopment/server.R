@@ -1,47 +1,56 @@
+list.of.packages <- c("shiny", "leaflet", "data.table", "ggmap")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 require(shiny)
 require(leaflet)
 require(data.table)
 require(nominatim)
 require(httr)
+require(ggmap)
 
+#This is a dataset for all school locations in Tallinn
 schoolData <- readRDS("datasets/schoolData.rds")
 
-
-##This may be used to retrieve JSON address information from Google Maps API, 
-#it takes a user inputted address as a parameter
-#TODO://User input address must sub spaces for + in order to work
-#EX:Pärnu+mnt+102c would work, but Pärnu mnt 102c would crash app
-
-getAddressData <- function(address){
-  url <- paste0("https://maps.googleapis.com/maps/api/geocode/json?address=",address)
-  someData <- jsonlite::fromJSON(url)
-
-}
-
-
 function(input, output, session) {
-  
-  
-  #In the future this should be able to create an addressMarker by retrieving the lat and lon
-  #from user input address
-  ##NB! Currently does nothing
-  addressMarker <- observeEvent(input$addressButton, {getAddressData(addressCleaned)})
 
-  
-  addressValue <- eventReactive(input$addressButton, {input$address})
-
-  ##Displays the users' input in the UI underneath the address text field
-  output$value <- addressValue
-  
-  
-  ##Outputs the leaflet map, currently it is setlto display all schools on map
-  output$map <- renderLeaflet({
-    leaflet() %>%
-      addProviderTiles(providers$Stamen.TonerLite,
-                       options = providerTileOptions(noWrap = TRUE)
-      ) %>%
-      addMarkers(data = schoolData)
+  #Initializes the leaflet map for the page.
+  output$outputmap <- renderLeaflet({
+    map <-
+      leaflet() %>% addProviderTiles(providers$OpenStreetMap.Mapnik)  %>%
+      setView(lng =  24.753574,
+              lat = 59.436962,
+              zoom = 12)
+    
   })
   
-
+  
+  #Takes an address input and places a marker on the map at given location
+  observeEvent(input$addressButton, {
+    newMarker <- geocoding()
+    leafletProxy('outputmap') %>% addMarkers(lng = newMarker$lon, lat = newMarker$lat)
+  })
+  
+  
+  #If the option "Schools" is checked then all schools will be placed on a map
+  #TODO://Only display schools on map which are in current field of view (zoom level)
+  observeEvent(input$checkGroup, {
+    if (input$checkGroup == 2) {
+      leafletProxy('outputmap') %>% addMarkers (data = schoolData)
+    }
+    
+    
+  })
+  
+  #If the option "Bus Stops" is selected, the map will change to a transport layer
+  observeEvent(input$checkGroup, {
+    if (input$checkGroup == 3) {
+      leafletProxy('outputmap') %>% addProviderTiles(providers$Thunderforest.Transport)
+      leafletProxy('outputmap') %>% removeTiles('outputmap')
+      
+      
+    }
+  })
+  
+  
 }
