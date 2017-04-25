@@ -11,15 +11,6 @@ navbarPage(
                actionButton("addressButton", "Search"),
                p(
                  "Type in an address and press 'search' to mark the location on the map!"
-               ),
-               checkboxGroupInput(
-                 "checkGroup",
-                 label = h4("Select Map Layers"),
-                 choices = list(
-                   "Car Accidents" = 1,
-                   "Schools" = 2,
-                   "Bus stops" = 3
-                 )
                )
              ),
              mainPanel(
