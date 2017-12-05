@@ -7,11 +7,12 @@ library(ggmap)
 schoolData <- readRDS("datasets/schoolData.rds")
 lasteaedData <- readRDS("datasets/lasteaedData.RDS")
 crashData <- readRDS("datasets/crashDataCleanedFixed.rds")
+crimeProperty <- readRDS("datasets/crimeProperty.RDS")
 
 ##Subset and Select data here
-names(schoolData)[6] <- paste("Type")
-lasteaedData <- subset(schoolData, schoolData$Type == "lasteaed", select = V1:ads_oid)
-schoolData <- subset(schoolData, schoolData$Type != "lasteaed", select = V1:ads_oid)
+# names(schoolData)[6] <- paste("Type")
+# lasteaedData <- subset(schoolData, schoolData$Type == "lasteaed", select = V1:ads_oid)
+# schoolData <- subset(schoolData, schoolData$Type != "lasteaed", select = V1:ads_oid)
 
 ##Create Custom Icons Here
 schoolIcons <- awesomeIcons(
@@ -37,6 +38,24 @@ addressIcons <- awesomeIcons(
 
 function(input, output, session) {
   
+  #Create Data Table
+    output$table <- DT::renderDataTable(DT::datatable({
+    data <- crimeProperty
+    input$test
+
+    data <- crimeProperty
+    if (input$linnaosa != "All") {
+      data <- data[data$KohtNimetus == input$linnaosa,]
+    }
+    if (input$type != "All") {
+      data <- data[data$ParagrahvTais == input$type,]
+    }
+    if (input$hind != "All") {
+      data <- data[data$Kahjusumma == input$hind,]
+    }
+    data
+  }))
+  
   ##Initializes the leaflet map for the page.
   output$outputmap <- renderLeaflet({
     map <-
@@ -51,6 +70,9 @@ function(input, output, session) {
         popup = paste(
           "Name:",
           schoolData$Nimi,
+          "<br>",
+          "Language:",
+          schoolData$Õppekeel,
           "<br>",
           "Type:",
           schoolData$Type,
@@ -67,6 +89,9 @@ function(input, output, session) {
         popup = paste(
           "Name:",
           lasteaedData$Nimi,
+          "<br>",
+          "Language:",
+          lasteaedData$Õppekeel,
           "<br>",
           "Type:",
           lasteaedData$Type,
@@ -85,6 +110,9 @@ function(input, output, session) {
           "Date:",
           crashData$Kuupäev,
           "<br>",
+          "Situation",
+          crashData$Situatsiooni.tüüp,
+          "<br>",
           "Time:",
           crashData$Kellaaeg,
           "<br>",
@@ -95,14 +123,12 @@ function(input, output, session) {
       ) %>%
       
       addLayersControl(
-        overlayGroups = c("Schools","Kindergartens", "Car Accidents", "Crime", "Bus Stops"),
+        overlayGroups = c("Schools","Kindergartens", "Car Accidents", "Bus Stops"),
         options = layersControlOptions(collapsed = FALSE)
       ) %>%
       hideGroup("Schools")    %>%
       hideGroup("Kindergartens")    %>%
-      hideGroup("Car Accidents")     %>%
-      hideGroup("Crime")     %>%
-      hideGroup("Bus Stops")
+      hideGroup("Car Accidents")    
   })
   
   
