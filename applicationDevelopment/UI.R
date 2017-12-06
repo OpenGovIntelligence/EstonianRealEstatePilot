@@ -1,6 +1,9 @@
 library(shiny)
 library(leaflet)
 library(ggmap)
+library(data.table)
+library(DT)
+
 navbarPage(
   "Tallinn Real Estate Pilot Program",
   tabPanel("Map of Tallinn",
@@ -22,38 +25,23 @@ navbarPage(
                
              )
            )),
-   tabPanel(
-     title = "Crime Data Exploration",
-
-  fluidRow(
-    column(4,
-           selectInput("linnaosa",
-                       "Linnaosa:",
-                       c("All",
-                         unique(as.character(crimeProperty$KohtNimetus))))
-    ),
-    column(4,
-           selectInput("type",
-                       "Crime Type:",
-                       c("All",
-                         unique(as.character(crimeProperty$ParagrahvTais))))
-    ),
-    column(4,
-           selectInput("hind",
-                       "Total Damage:",
-                       c("All",
-                         unique(as.character(crimeProperty$Kahjusumma))))
-    )
-  ),
-  # Create a new row for the table.
-   fluidRow(
-     div(DT::dataTableOutput("table"))
-   )),
+  tabPanel(
+    title = "Crime Data Exploration",
+    sidebarLayout(
+      sidebarPanel(
+      selectInput("dataset", "Choose Dataset to Display and Download:", choices = c("Property Crime", 
+                                                                                    "Crimes against the State", 
+                                                                                    "Traffic Crimes", 
+                                                                                    "Lastead Data", 
+                                                                                    "School Data", 
+                                                                                    "Car Crash Data")),
+      downloadButton("downloadData", "Download data")),
+      mainPanel(
+          DT::dataTableOutput("table")
+    ))),
   tabPanel(title = "About", 
            fluidRow(
              column(8, offset = 1,
                     includeMarkdown("about.md"))))
-  
-  
   
 )

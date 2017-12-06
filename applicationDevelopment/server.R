@@ -2,17 +2,23 @@ library(shiny)
 library(leaflet)
 library(data.table)
 library(ggmap)
+library(DT)
 
-##Load Data Here
-schoolData <- readRDS("datasets/schoolData.rds")
+##Load School and Lasteaed Data
+schoolData <- readRDS("datasets/schoolDataSubset.RDS")
+colnames(schoolData)[7] <- "Oppekeel"
 lasteaedData <- readRDS("datasets/lasteaedData.RDS")
-crashData <- readRDS("datasets/crashDataCleanedFixed.rds")
-crimeProperty <- readRDS("datasets/crimeProperty.RDS")
+colnames(lasteaedData)[7] <- "Oppekeel"
 
-##Subset and Select data here
-# names(schoolData)[6] <- paste("Type")
-# lasteaedData <- subset(schoolData, schoolData$Type == "lasteaed", select = V1:ads_oid)
-# schoolData <- subset(schoolData, schoolData$Type != "lasteaed", select = V1:ads_oid)
+#Load Car Crash Data
+crashData <- readRDS("datasets/crashDataCleanedFixed.RDS")
+colnames(crashData)[4] <- "Kuupaev"
+colnames(crashData)[6] <- "Situatsiooni.tuup"
+
+##Load Crime Data
+crimeProperty <- readRDS("datasets/crimePropertyTallinn.RDS")
+crimeState <- readRDS("datasets/crimeStateTallinn.RDS")
+crimeTraffic <- readRDS("datasets/crimeTrafficTallinn.RDS")
 
 ##Create Custom Icons Here
 schoolIcons <- awesomeIcons(
@@ -36,25 +42,36 @@ addressIcons <- awesomeIcons(
   iconColor = 'black'
 )
 
+##Start Server Code
 function(input, output, session) {
   
-  #Create Data Table
-    output$table <- DT::renderDataTable(DT::datatable({
-    data <- crimeProperty
-    input$test
-
-    data <- crimeProperty
+ output$propertytable <- DT::renderDataTable({
     if (input$linnaosa != "All") {
-      data <- data[data$KohtNimetus == input$linnaosa,]
+      crimeProperty <- crimeProperty[crimeProperty$KohtNimetus == input$linnaosa,]
     }
-    if (input$type != "All") {
-      data <- data[data$ParagrahvTais == input$type,]
+    if (input$day != "All") {
+      crimeProperty <- crimeProperty[crimeProperty$ToimNadalapaev == input$day,]
     }
-    if (input$hind != "All") {
-      data <- data[data$Kahjusumma == input$hind,]
+    DT::datatable(crimeProperty)
+  })
+  output$statetable <- DT::renderDataTable({
+    if (input$linnaosa != "All") {
+      crimeState <- crimeState[crimeState$KohtNimetus == input$linnaosa,]
     }
-    data
-  }))
+    if (input$day != "All") {
+      crimeState <- crimeState[crimeState$ToimNadalapaev == input$day,]
+    }
+    DT::datatable(crimeState)
+  })
+  output$traffictable <- DT::renderDataTable({
+    if (input$linnaosa != "All") {
+      crimeTraffic <- crimeTraffic[crimeTraffic$KohtNimetus == input$linnaosa,]
+    }
+    if (input$day != "All") {
+      crimeTraffic <- crimeTraffic[crimeTraffic$ToimNadalapaev == input$day,]
+    }
+    DT::datatable(crimeTraffic)
+  })
   
   ##Initializes the leaflet map for the page.
   output$outputmap <- renderLeaflet({
@@ -72,7 +89,7 @@ function(input, output, session) {
           schoolData$Nimi,
           "<br>",
           "Language:",
-          schoolData$Õppekeel,
+          schoolData$Oppekeel,
           "<br>",
           "Type:",
           schoolData$Type,
@@ -91,7 +108,7 @@ function(input, output, session) {
           lasteaedData$Nimi,
           "<br>",
           "Language:",
-          lasteaedData$Õppekeel,
+          lasteaedData$Oppekeel,
           "<br>",
           "Type:",
           lasteaedData$Type,
@@ -108,10 +125,10 @@ function(input, output, session) {
         clusterOptions = markerClusterOptions(),
         popup = paste(
           "Date:",
-          crashData$Kuupäev,
+          crashData$Kuupaev,
           "<br>",
-          "Situation",
-          crashData$Situatsiooni.tüüp,
+          "Situation:",
+          crashData$Situatsiooni.tuup,
           "<br>",
           "Time:",
           crashData$Kellaaeg,
@@ -123,7 +140,7 @@ function(input, output, session) {
       ) %>%
       
       addLayersControl(
-        overlayGroups = c("Schools","Kindergartens", "Car Accidents", "Bus Stops"),
+        overlayGroups = c("Schools","Kindergartens", "Car Accidents"),
         options = layersControlOptions(collapsed = FALSE)
       ) %>%
       hideGroup("Schools")    %>%
@@ -148,5 +165,29 @@ function(input, output, session) {
       label = input$address
     )
   })
+  
+  
+  datasetInput <- reactive({
+    switch(input$dataset,
+           "Property Crime" = crimeProperty, 
+           "Crimes against the State" = crimeState, 
+           "Traffic Crimes" = crimeTraffic,
+           "Lastead Data" = lasteaedData,
+            "School Data" = schoolData,
+            "Car Crash Data" = crashData)
+  })
+  
+  output$table <- DT::renderDataTable({
+  datasetInput()
+  })
+  
+  output$downloadData <- downloadHandler(
+      filename = function() {
+      paste(input$dataset, ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(datasetInput() , file, row.names = FALSE)
+    }
+  )
   
 }
